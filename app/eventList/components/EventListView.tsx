@@ -31,17 +31,21 @@ const EventListView = (): ReactElement => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    isFocused && dispatch(getEvents(1));
-  }, [isFocused]);
+    isFocused && getEventList(1);
+  }, [isFocused, refreshing]);
+
+  const getEventList = (prevPage: number): void => {
+    setIsNeedLoading(false);
+
+    const currentPage = Math.min(prevPage + 1, totalPage);
+
+    dispatch(getEvents(currentPage));
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIsNeedLoading(false);
-
-      const currentPage = Math.min(page + 1, totalPage);
-
-      dispatch(getEvents(currentPage));
-      setRefreshing(false);
+      getEventList(page);
     }, 1000 * 60);
     return () => {
       clearInterval(timer);
@@ -50,6 +54,7 @@ const EventListView = (): ReactElement => {
 
   useEffect(() => {
     let timer: NodeJS.Timer | null = null;
+
     if (refreshTimer && (refreshing || refreshTimer < maxRefreshTimer)) {
       timer = setInterval(() => {
         setRefreshTimer(refreshTimer + 1);
@@ -71,6 +76,8 @@ const EventListView = (): ReactElement => {
   }, [isNeedLoading]);
 
   const onRefresh = useCallback(() => {
+    console.log('refreshTimer', refreshTimer);
+
     if (!refreshTimer || refreshTimer === maxRefreshTimer) {
       setPage(0);
       setRefreshing(true);
