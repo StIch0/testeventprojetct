@@ -11,6 +11,12 @@
 API:
  https://docs.github.com/en/rest/reference/activity#list-public-events
 
+# Установка проекта
+
+npm install
+
+npx pod-install
+
 # Запуск проекта 
 
 npm run start
