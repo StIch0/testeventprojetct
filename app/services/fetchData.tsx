@@ -10,7 +10,9 @@ const timeout = <T,>({ ms = 1000, promise }: ITimeoutProps<T>) => {
     setTimeout(() => {
       reject(new Error('Проверьте соединение с интернетом'));
     }, ms);
-    promise.then(resolve, reject);
+    setTimeout(() => {
+      promise.then(resolve, reject);
+    }, 10000);
   });
 };
 
@@ -41,7 +43,10 @@ export const fetchData = async <T,>(
       body
     };
 
-    const response = await timeout({ promise: fetch(url, requestInit), ms: 0 });
+    const response = await timeout({
+      promise: fetch(url, requestInit),
+      ms: 1000
+    });
 
     const responseJSON = (await response.json()) as T;
 

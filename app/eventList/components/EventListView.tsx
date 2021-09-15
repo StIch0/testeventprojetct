@@ -1,6 +1,12 @@
 import { useIsFocused } from '@react-navigation/core';
 import React, { ReactElement, useCallback, useEffect, useState } from 'react';
-import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  ListRenderItemInfo,
+  StyleSheet,
+  View
+} from 'react-native';
 import { useDispatch } from 'react-redux';
 import { getEvents } from '../../redux/actions/events';
 import { useRootSelector } from '../../redux/hooks';
@@ -76,8 +82,6 @@ const EventListView = (): ReactElement => {
   }, [isNeedLoading]);
 
   const onRefresh = useCallback(() => {
-    console.log('refreshTimer', refreshTimer);
-
     if (!refreshTimer || refreshTimer === maxRefreshTimer) {
       setPage(0);
       setRefreshing(true);
@@ -86,8 +90,16 @@ const EventListView = (): ReactElement => {
   }, [refreshTimer]);
 
   const {
-    events: { eventIdxList }
+    events: { eventIdxList, loading }
   } = useRootSelector();
+
+  if (loading) {
+    return (
+      <View style={styles.activityIndicatorContainer}>
+        <ActivityIndicator size='large' />
+      </View>
+    );
+  }
 
   return (
     <FlatList
@@ -113,5 +125,10 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: '#fff'
+  },
+  activityIndicatorContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
